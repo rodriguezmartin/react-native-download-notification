@@ -1,0 +1,32 @@
+
+{
+  "name": "react-native-download-notification",
+  "version": "1.0.0",
+  "description": "Create, update and handle intents from Android notifications with progress bar in React Native.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:rodriguezmartin/react-native-download-notification"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "notification",
+    "download"
+  ],
+  "author": {
+    "name": "Rodriguez Martin",
+    "email": "dev.rodriguez.martin@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rodriguezmartin/react-native-download-notification/issues"
+  },
+  "homepage": "https://github.com/rodriguezmartin/react-native-download-notification#readme",
+  "peerDependencies": {
+    "react-native": "*"
+  }
+}
