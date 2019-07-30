@@ -32,6 +32,8 @@ public class DownloadNotification {
     this.fileName = fileName;
     this.labels = labels;
 
+    checkOrCreateChannel(notificationManager);
+
     builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(reactContext.getResources().getIdentifier(labels.get("icon"), "mipmap", reactContext.getPackageName()))
       .setContentTitle(fileName)
@@ -47,6 +49,29 @@ public class DownloadNotification {
     intent.putExtra("info", "{\"notiId\": "+ String.valueOf(id) +", \"intent\": \""+ type +"\"}");
     PendingIntent pendingIntent = PendingIntent.getBroadcast(reactContext, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     return pendingIntent;
+  }
+
+  private static boolean channelCreated = false;
+  private void checkOrCreateChannel(NotificationManager manager) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+      return;
+    if (channelCreated)
+      return;
+    if (manager == null)
+      return;
+
+    Bundle bundle = new Bundle();
+
+    int importance = NotificationManager.IMPORTANCE_HIGH;
+
+    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Download Notification", importance);
+
+    channel.setDescription("Contains all download notifications");
+    channel.enableLights(true);
+    channel.enableVibration(true);
+
+    manager.createNotificationChannel(channel);
+    channelCreated = true;
   }
 
   public void publish() {
