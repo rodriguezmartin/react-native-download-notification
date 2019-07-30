@@ -5,7 +5,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import android.content.Context;
 import android.content.Intent;
 import android.app.PendingIntent;
-import android.app.Notification;
+import androidx.core.app.NotificationCompat;
 import android.app.NotificationManager;
 
 import java.util.Map;
@@ -19,9 +19,10 @@ public class DownloadNotification {
   public int id;
   private String fileName;
   private Map<String, String> labels = new HashMap<String, String>();
-  private Notification.Builder builder;
+  private NotificationCompat.Builder builder;
   private NotificationManager notiManager;
   private boolean firstReceiver = true;
+  private static final String NOTIFICATION_CHANNEL_ID = "download-notification-channel-id";
 
   public DownloadNotification(ReactApplicationContext reactContext, NotificationManager notiManager, int id, Map<String, String> labels, String fileName) {
     this.reactContext = reactContext;
@@ -31,7 +32,7 @@ public class DownloadNotification {
     this.fileName = fileName;
     this.labels = labels;
 
-    builder = new Notification.Builder(context)
+    builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(reactContext.getResources().getIdentifier(labels.get("icon"), "mipmap", reactContext.getPackageName()))
       .setContentTitle(fileName)
       .setContentText(labels.get("downloading"))
