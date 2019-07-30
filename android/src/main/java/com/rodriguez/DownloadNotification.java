@@ -35,7 +35,7 @@ public class DownloadNotification {
     this.fileName = fileName;
     this.labels = labels;
 
-    checkOrCreateChannel(notificationManager);
+    checkOrCreateChannel(notiManager);
 
     builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(reactContext.getResources().getIdentifier(labels.get("icon"), "mipmap", reactContext.getPackageName()))
