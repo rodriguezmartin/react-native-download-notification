@@ -5,8 +5,11 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import android.content.Context;
 import android.content.Intent;
 import android.app.PendingIntent;
-import android.app.Notification;
+import androidx.core.app.NotificationCompat;
 import android.app.NotificationManager;
+import android.app.NotificationChannel;
+import android.os.Bundle;
+import android.os.Build;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -19,9 +22,10 @@ public class DownloadNotification {
   public int id;
   private String fileName;
   private Map<String, String> labels = new HashMap<String, String>();
-  private Notification.Builder builder;
+  private NotificationCompat.Builder builder;
   private NotificationManager notiManager;
   private boolean firstReceiver = true;
+  private static final String NOTIFICATION_CHANNEL_ID = "download-notification-channel-id";
 
   public DownloadNotification(ReactApplicationContext reactContext, NotificationManager notiManager, int id, Map<String, String> labels, String fileName) {
     this.reactContext = reactContext;
@@ -31,7 +35,9 @@ public class DownloadNotification {
     this.fileName = fileName;
     this.labels = labels;
 
-    builder = new Notification.Builder(context)
+    checkOrCreateChannel(notiManager);
+
+    builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(reactContext.getResources().getIdentifier(labels.get("icon"), "mipmap", reactContext.getPackageName()))
       .setContentTitle(fileName)
       .setContentText(labels.get("downloading"))
@@ -46,6 +52,29 @@ public class DownloadNotification {
     intent.putExtra("info", "{\"notiId\": "+ String.valueOf(id) +", \"intent\": \""+ type +"\"}");
     PendingIntent pendingIntent = PendingIntent.getBroadcast(reactContext, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     return pendingIntent;
+  }
+
+  private static boolean channelCreated = false;
+  private void checkOrCreateChannel(NotificationManager manager) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+      return;
+    if (channelCreated)
+      return;
+    if (manager == null)
+      return;
+
+    Bundle bundle = new Bundle();
+
+    int importance = NotificationManager.IMPORTANCE_HIGH;
+
+    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Download Notification", importance);
+
+    channel.setDescription("Contains all download notifications");
+    channel.enableLights(true);
+    channel.enableVibration(true);
+
+    manager.createNotificationChannel(channel);
+    channelCreated = true;
   }
 
   public void publish() {
